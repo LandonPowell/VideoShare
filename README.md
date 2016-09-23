@@ -1,2 +1,2 @@
 # VideoShare
-Simple Video Sharing Site ( WIP ) ( I'll probably use this for porn. )
+Simple Video Sharing Site in Python with Tornado and MongoDB ( WIP )
