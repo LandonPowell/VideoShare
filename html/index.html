@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+    <head>
+        <title> {{ name }} </title>
+        <link href="/css/theme.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <h1 id="title"> {{ name }} </h1>
+        
+        <button id="uploadButton" class="close"> Upload </button>
+        <form id="upload" class="close" action="/upload" method="post" enctype="multipart/form-data">
+            <input type="text" name="title" placeholder="Title"/><br>
+            <input type="text" name="tags"  placeholder="Tags"/><br>
+            <input type="file" name="video"/><br>
+
+            <input type="submit" />
+        </form>
+
+    </body>
+    
+    <script src="js/jquery.js"></script>
+    <script src="js/index.js"></script>
+</html>
