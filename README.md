@@ -1,2 +1,2 @@
 # VideoShare
-Simple Video Sharing Site in Python with Tornado and MongoDB ( WIP )
+Simple Video Sharing Site in Python3 with Tornado and MongoDB ( WIP )
