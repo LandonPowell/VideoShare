@@ -28,8 +28,8 @@ def counterStartup(value, error): # Defines counters.
         database.counters.insert( {"video"  : 1} )
         database.counters.insert( {"user"   : 1} )
 
-blockDB.counters.find_one( # Simple test to see if the counters are defined.
-    {"video": {"$gt": 0}}, 
+database.counters.find_one( # Simple test to see if the counters are defined.
+    {"video": {"$gt": 0}},
     callback=counterStartup
 )
 
@@ -69,7 +69,7 @@ class uploadVideo(tornado.web.RequestHandler):
             # I create a temporary video file here so that I can edit it with MoviePy
             videoData = self.request.files["video"][0]
             fileType = videoData["filename"].split(".")[-1]
-            with open("tempFiles/video."+fileType, "wb") as file:
+            with open("tempFiles/video."+fileType, "w+") as file:
                 file.write(videoData["body"])
             videoClip = vid.VideoFileClip("tempFiles/video."+fileType)
 
