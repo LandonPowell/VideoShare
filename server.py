@@ -28,7 +28,7 @@ def counterStartup(value, error): # Defines counters.
         database.counters.insert( {"video"  : 1} )
         database.counters.insert( {"user"   : 1} )
 
-database.counters.find_one( # Simple test to see if the counters are defined.
+blockDB.counters.find_one( # Simple test to see if the counters are defined.
     {"video": {"$gt": 0}}, 
     callback=counterStartup
 )
@@ -114,13 +114,32 @@ class uploadVideo(tornado.web.RequestHandler):
                 error   = "but it looks like you didn't pick a file to upload."
             ) )
 
+def searchEngine(keywords, page):
+#    for word in keywords:
+#        x = blockDB.videos.find({ "tags" : word }).sort({"vidID":-1})
+    print( blockDB.videos.find({ "tags" : keywords[0] }) )
+    return ["xd"]
+
+class search(tornado.web.RequestHandler):
+    def get(self):
+
+        try:    keywords = self.get_argument('query').split("+")
+        except: return False
+
+        try:    page = int(keywords = self.get_argument('page'))
+        except: page = 0
+
+        result = searchEngine(keywords, page)
+
+        self.write("\n".join(result))
+
 class index(tornado.web.RequestHandler):
     def get(self):
         self.write( templates.load("index.html").generate(
             name = config.name,
         ) )
 
-def make_app():
+def makeApp():
     return tornado.web.Application([
         (r"/js/(.*)",   tornado.web.StaticFileHandler, {"path":"js"}        ),      # This handles serving javascript.
         (r"/css/(.*)",  tornado.web.StaticFileHandler, {"path":"css"}       ),      # This handles the serving of stylesheets.
@@ -128,10 +147,11 @@ def make_app():
         (r"/e(\w*)",    embedVideo  ),  # An embeded video.
         (r"/v(\w*)",    watchVideo  ),  # A normal video page.
         (r"/upload",    uploadVideo ),  # The uploads form.
+        (r"/search",    search      ),
         (r"/.*",        index       ),  # The main page. If your post doesn't work, it goes here.
     ])
 
 if __name__ == "__main__":
-    app = make_app()
+    app = makeApp()
     app.listen(8080)
     tornado.ioloop.IOLoop.current().start()

@@ -48,6 +48,21 @@ h1 {
     border-bottom: none;
 }
 
+#search {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 300px;
+}
+
+#search input {
+    font-family: playfair;
+    font-size: 20px;
+    border: 10px solid #eee;
+    padding: 7px;
+    width: 100%;
+}
+
 #uploadButton.close {
     color: #666;
 }

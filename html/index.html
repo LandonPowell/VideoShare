@@ -6,7 +6,11 @@
     </head>
     <body>
         <h1 id="title"> {{ name }} </h1>
-        
+
+        <form id="search" action="/search" method="get">
+            <input type="text" name="query" placeholder="Search"/>
+        </form>
+
         <button id="uploadButton" class="close"> Upload </button>
         <form id="upload" class="close" action="/upload" method="post" enctype="multipart/form-data">
             <input type="text" name="title" placeholder="Title"/><br>
