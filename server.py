@@ -1,3 +1,5 @@
+# Asynchronous multiprocessing is necessary for using moviepy in this context.
+from multiprocessing import Process
 # Imports for Tornado's basic functions. Webpy was easier.
 import tornado.template, tornado.ioloop, tornado.web
 # Sometimes I want blocking, sometimes I don't. Is that so much to ask for in a fucking Mongo controller?
@@ -58,6 +60,29 @@ class watchVideo(tornado.web.RequestHandler):
                 paste   = value['paste'],
             ) )
 
+def writeVideo(videoData, videoName):
+    # I create a temporary video file here so that I can edit it with MoviePy
+    fileType = videoData["filename"].split(".")[-1]
+    with open("tempFiles/video."+fileType, "wb") as file:
+        file.write(videoData["body"])
+    videoClip = vid.VideoFileClip("tempFiles/video."+fileType)
+
+    # Conditional for adding watermark. Could also be used to modify video.
+    if config.watermark:
+        watermark = vid.ImageClip(
+            "watermark.png", 
+            duration=videoClip.duration
+        )
+        fullVideo = vid.CompositeVideoClip([videoClip, watermark])
+
+    else: 
+        fullVideo = videoClip
+
+    fullVideo.write_videofile(
+        "videos/" + videoName + ".webm"
+    )
+    
+
 class uploadVideo(tornado.web.RequestHandler):
     def post(self):
         if "video" in self.request.files: # Checks if user uploaded a video.
@@ -66,12 +91,7 @@ class uploadVideo(tornado.web.RequestHandler):
             videoTags   = self.get_argument("tags" ) or "no-tag-vid"
             pasteBin    = self.get_argument("paste", "No Pasted Info")
 
-            # I create a temporary video file here so that I can edit it with MoviePy
             videoData = self.request.files["video"][0]
-            fileType = videoData["filename"].split(".")[-1]
-            with open("tempFiles/video."+fileType, "w+") as file:
-                file.write(videoData["body"])
-            videoClip = vid.VideoFileClip("tempFiles/video."+fileType)
 
             def newVideo(value, error):
                 database.counters.update(
@@ -79,19 +99,11 @@ class uploadVideo(tornado.web.RequestHandler):
                     {'video': value['video']+1  }
                 )
 
-                if config.watermark:
-                    watermark = vid.ImageClip(
-                        "watermark.png", 
-                        duration=videoClip.duration
-                    )
-                    fullVideo = vid.CompositeVideoClip([videoClip, watermark])
-
-                else: 
-                    fullVideo = videoClip
-
-                fullVideo.write_videofile(
-                    "videos/" + to36( value['video'] ) + ".webm"
+                videoWriter = Process(
+                    target  = writeVideo,
+                    args    = (videoData, to36(value['video']) )
                 )
+                videoWriter.start()
 
                 database.videos.insert({
                     "vidID" : to36( value['video'] ),
@@ -99,8 +111,6 @@ class uploadVideo(tornado.web.RequestHandler):
                     "tags"  : videoTags,
                     "paste" : pasteBin,
                 })
-
-                self.redirect("/v" + to36( value['video'] ) + ".webm")
 
             database.counters.find_one(
                 {"video": {"$gt": 0}},
