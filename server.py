@@ -17,6 +17,11 @@ def to36(number): # Converts integers into base 36. Should be a default function
         base36 = alphabet[i] + base36
     return base36
 
+def tokenize(string):
+    # To-do WIP
+    string = string.lower()
+    return string.split(" ")
+
 templates   = tornado.template.Loader("html")
 
 client      = motor.motor_tornado.MotorClient( config.db )  # Two connections,
@@ -60,7 +65,7 @@ class watchVideo(tornado.web.RequestHandler):
                 paste   = value['paste'],
             ) )
 
-def writeVideo(videoData, videoName):
+def writeVideo(videoData, videoObject):
     # I create a temporary video file here so that I can edit it with MoviePy
     fileType = videoData["filename"].split(".")[-1]
     with open("tempFiles/video."+fileType, "wb") as file:
@@ -71,7 +76,7 @@ def writeVideo(videoData, videoName):
     if config.watermark:
         watermark = vid.ImageClip(
             "watermark.png", 
-            duration=videoClip.duration
+            duration = videoClip.duration
         )
         fullVideo = vid.CompositeVideoClip([videoClip, watermark])
 
@@ -79,11 +84,21 @@ def writeVideo(videoData, videoName):
         fullVideo = videoClip
 
     fullVideo.write_videofile(
-        "videos/" + videoName + ".webm"
+        "videos/" + videoObject["vidID"] + ".webm"
     )
-    
+
+    thumbnail = videoClip.volumex(0)
+    thumbnail.resize( (100, 50) )
+
+    thumbnail.write_videofile(
+        "thumbnails/" + videoObject["vidID"] + ".webm",
+        fps = 2
+    )
 
 class uploadVideo(tornado.web.RequestHandler):
+    # To-do: Optimize how this works a bit. 
+    # It's currently using both the databases due to the fact that it needs to
+    # write the video's url to the user but needs to do the writing to the DB as async. 
     def post(self):
         if "video" in self.request.files: # Checks if user uploaded a video.
 
@@ -93,24 +108,33 @@ class uploadVideo(tornado.web.RequestHandler):
 
             videoData = self.request.files["video"][0]
 
+            currentVideo = blockDB.counters.find_one({"videos" : {"$gt":0}})['video']
+
+            self.write( templates.load("index.html").generate(
+                name = config.name,
+                id = to36(currentVideo) #
+            ) )
+
             def newVideo(value, error):
                 database.counters.update(
                     {'_id'  : value['_id']      },
                     {'video': value['video']+1  }
                 )
 
+                videoObject = {
+                    "vidID" : to36( value['video'] ),
+                    "title" : videoTitle,
+                    "tags"  : tokenize(videoTags),
+                    "paste" : pasteBin,
+                }
+
                 videoWriter = Process(
                     target  = writeVideo,
-                    args    = (videoData, to36(value['video']) )
+                    args    = ( videoData, videoObject )
                 )
                 videoWriter.start()
 
-                database.videos.insert({
-                    "vidID" : to36( value['video'] ),
-                    "title" : videoTitle,
-                    "tags"  : videoTags,
-                    "paste" : pasteBin,
-                })
+                database.videos.insert(videoObject)
 
             database.counters.find_one(
                 {"video": {"$gt": 0}},
@@ -124,35 +148,64 @@ class uploadVideo(tornado.web.RequestHandler):
                 error   = "but it looks like you didn't pick a file to upload."
             ) )
 
-def searchEngine(keywords, page):
-#    for word in keywords:
-#        x = blockDB.videos.find({ "tags" : word }).sort({"vidID":-1})
-    print( blockDB.videos.find({ "tags" : keywords[0] }) )
-    return ["xd"]
+def searchEngine(keywords, page, limit=config.resultsPerPage):
+    # I can add to this later and adapt it later.
+    # For now, it's beauty through simplicity.
+    matching = blockDB.videos.find({ 
+        "tags" : { "$all" : keywords }
+    }).sort([("_id", -1)])
+
+    startIndex  = page * limit
+    stopIndex   = startIndex + limit
+
+    if matching.count() == 0:
+        return []
+
+    if matching.count() < stopIndex:
+        return matching[0:matching.count()]
+
+    return matching[startIndex:stopIndex]
 
 class search(tornado.web.RequestHandler):
     def get(self):
 
-        try:    keywords = self.get_argument('query').split("+")
+        try:    keywords = self.get_argument('query').split(" ")
         except: return False
 
         try:    page = int(keywords = self.get_argument('page'))
         except: page = 0
 
-        result = searchEngine(keywords, page)
+        searchResult = searchEngine(keywords, page)
 
-        self.write("\n".join(result))
+        self.write( templates.load("search.html").generate(
+            name = config.name,
+            searchString = " ".join(keywords),
+            videos = searchResult
+        ) )
 
 class index(tornado.web.RequestHandler):
     def get(self):
+        videos = blockDB.videos.find().sort([("_id", -1)])
+
+        limit = 5
+
+        recentVideos = (
+            videos[0:limit]
+            if limit < videos.count() else
+            videos[0:videos.count()]
+        )
+
         self.write( templates.load("index.html").generate(
             name = config.name,
+            recentVideos = recentVideos,
+            recommended = [] # ToDo
         ) )
 
 def makeApp():
     return tornado.web.Application([
         (r"/js/(.*)",   tornado.web.StaticFileHandler, {"path":"js"}        ),      # This handles serving javascript.
         (r"/css/(.*)",  tornado.web.StaticFileHandler, {"path":"css"}       ),      # This handles the serving of stylesheets.
+        (r"/thumb/(.*)",tornado.web.StaticFileHandler, {"path":"thumbnails"}),
         (r"/r(.*)",     tornado.web.StaticFileHandler, {"path":"videos"}    ),      # It should be noted, there is no '/' after 'r'. This handles serving raw video.
         (r"/e(\w*)",    embedVideo  ),  # An embeded video.
         (r"/v(\w*)",    watchVideo  ),  # A normal video page.

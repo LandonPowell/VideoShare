@@ -1,5 +1,7 @@
-/* global $ from jquery library. */
-$("#uploadButton").click(function(){ 
-    $("#upload").toggleClass("close");
-    $("#uploadButton").toggleClass("close");
-});
+var uploadButton    = document.getElementById("uploadButton");
+var uploadForm      = document.getElementById("upload");
+
+uploadButton.onclick = function() {
+    uploadForm  .classList.toggle("close");
+    uploadButton.classList.toggle("close");
+};

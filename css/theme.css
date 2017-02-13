@@ -23,6 +23,10 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: normal;
 }
 
+a {
+    text-decoration: none;
+}
+
 h1 {
     border-bottom: 1px dashed #aaa;
     margin-bottom: 10px;
@@ -30,6 +34,12 @@ h1 {
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+}
+
+h2 {
+    margin-top: 20px;
+    margin-left: 10px;
+    text-transform: capitalize;
 }
 
 .center {
@@ -155,4 +165,66 @@ h1 {
     width: calc(100% - 500px);
     margin-left: auto;
     margin-right: auto;
+}
+
+/* 
+    SEARCH PAGE SPECIFIC STYLES
+*/
+
+#results {
+    margin-top: 20px;
+}
+
+.videoResult {
+    background-color: #eee;
+    display: inline-block;
+    padding: 10px;
+    margin: 20px;
+    width: calc(30% - 20px);
+}
+
+.videoResult video {
+    background-color: #000;
+    width: 100%;
+    height: 200px;
+}
+
+.videoResult .title {
+    color: #666;
+    font-size: 25px;
+}
+
+.videoResult .paste {
+    color: #aaa;
+}
+
+/*
+    INDEX PAGE SPECIFIC STYLES
+*/
+
+#recentVideos {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.recentVideo {
+    display: inline-block;
+    flex-grow: 1;
+    background-color: #eee;
+    padding: 10px;
+    margin: 10px;
+}
+
+.recentVideo video {
+    background-color: #000;
+}
+
+.recentVideo .title {
+    color: #666;
+    font-size: 20px;
+}
+
+.recentVideo .paste {
+    color: #aaa;
 }

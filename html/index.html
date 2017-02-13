@@ -3,6 +3,7 @@
     <head>
         <title> {{ name }} </title>
         <link href="/css/theme.css" rel="stylesheet" type="text/css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densitydpi=medium-dpi, user-scalable=0" />
     </head>
     <body>
         <h1 id="title"> {{ name }} </h1>
@@ -20,8 +21,42 @@
             <input type="submit" />
         </form>
 
+        <h2> Recent Videos </h2>
+        <div id="recentVideos">
+        {% for video in recentVideos %}
+
+            <a href="v{{ escape(video['vidID']) }}">
+            <div class="recentVideo" id="{{ escape(video['vidID']) }}">
+
+                <video width="200" height="100" autoplay loop>
+                    <source src="thumb/{{ escape(video['vidID']) }}.webm" type="video/webm">
+                    To-do: Add something here as a backup thumbnail.
+                </video>
+
+                <div class="title"> 
+                    {{ escape(video['title']) }} 
+                </div>
+                <div class="paste"> 
+                    {{ escape(video['paste']) }} 
+                </div>
+
+            </div>
+            </a>
+
+        {% end %}
+        </div>
+
+
+        {% for query in recommended %}
+            <h2> {{ escape(query.tag) }} </h2>
+            <div>
+            {% for video in query.videos %}
+            {% end %}
+            </div>
+        {% end %}
+
+
     </body>
     
-    <script src="js/jquery.js"></script>
     <script src="js/index.js"></script>
 </html>
