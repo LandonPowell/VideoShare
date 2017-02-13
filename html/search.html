@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+    <head>
+        <title> {{ name }} </title>
+        <link href="/css/theme.css" rel="stylesheet" type="text/css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densitydpi=medium-dpi, user-scalable=0" />
+    </head>
+    <body>
+        <h1 id="title"> {{ name }} </h1>
+
+        <form id="search" action="/search" method="get">
+            <input type="text" name="query" placeholder="Search" value="{{ escape(searchString) }}"/>
+        </form>
+
+        <div id="results">
+
+        {% for video in videos %}
+            <a href="v{{ escape(video['vidID']) }}">
+            <div class="videoResult" id="{{ escape(video['vidID']) }}">
+
+                <video width="200" height="100" autoplay loop>
+                    <source src="thumb/{{ escape(video['vidID']) }}.webm" type="video/webm">
+                    To-do: Add something here as a backup thumbnail.
+                </video>
+
+                <div class="title"> 
+                    {{ escape(video['title']) }} 
+                </div>
+                <div class="paste"> 
+                    {{ escape(video['paste']) }} 
+                </div>
+
+            </div>
+            </a>
+        {% end %}
+
+        </div>
+
+    </body>
+
+    <script src="js/index.js"></script>
+</html>
