@@ -66,6 +66,15 @@ class watchVideo(tornado.web.RequestHandler):
             ) )
 
 def writeVideo(videoData, videoObject):
+
+    vidID = videoObject["vidID"]
+
+    database.videosProcessing.update({
+        "vidID" : vidID
+    },{ "$set" : {
+        "status" : "writing video"
+    }})
+
     # I create a temporary video file here so that I can edit it with MoviePy
     fileType = videoData["filename"].split(".")[-1]
     with open("tempFiles/video."+fileType, "wb") as file:
@@ -84,16 +93,24 @@ def writeVideo(videoData, videoObject):
         fullVideo = videoClip
 
     fullVideo.write_videofile(
-        "videos/" + videoObject["vidID"] + ".webm"
+        "videos/" + vidID + ".webm"
     )
+
+    database.videosProcessing.update({
+        "vidID" : vidID
+    },{ "$set" : {
+        "status" : "writing thumbnail"
+    }})
 
     thumbnail = videoClip.volumex(0)
     thumbnail.resize( (100, 50) )
 
     thumbnail.write_videofile(
-        "thumbnails/" + videoObject["vidID"] + ".webm",
+        "thumbnails/" + vidID + ".webm",
         fps = 2
     )
+
+    database.videosProcessing.delete_one({ "vidID" : vidID })
 
 class uploadVideo(tornado.web.RequestHandler):
     # To-do: Optimize how this works a bit. 
@@ -108,11 +125,11 @@ class uploadVideo(tornado.web.RequestHandler):
 
             videoData = self.request.files["video"][0]
 
-            currentVideo = blockDB.counters.find_one({"videos" : {"$gt":0}})['video']
+            currentVideo = blockDB.counters.find_one({"video" : {"$gt":0}})['video']
 
-            self.write( templates.load("index.html").generate(
+            self.write( templates.load("videoProcessing.html").generate(
                 name = config.name,
-                id = to36(currentVideo) #
+                id = to36(currentVideo)
             ) )
 
             def newVideo(value, error):
@@ -121,12 +138,19 @@ class uploadVideo(tornado.web.RequestHandler):
                     {'video': value['video']+1  }
                 )
 
+                vidID = to36( value['video'] )
+
                 videoObject = {
-                    "vidID" : to36( value['video'] ),
+                    "vidID" : vidID,
                     "title" : videoTitle,
                     "tags"  : tokenize(videoTags),
                     "paste" : pasteBin,
                 }
+
+                database.videosProcessing.insert({
+                    "vidID" : vidID,
+                    "status": "starting",
+                })
 
                 videoWriter = Process(
                     target  = writeVideo,
@@ -201,16 +225,27 @@ class index(tornado.web.RequestHandler):
             recommended = [] # ToDo
         ) )
 
+class status(tornado.web.RequestHandler):
+    def get(self, videoID):
+        info = blockDB.videosProcessing.find_one({ "vidID" : videoID })
+
+        if info == None or 'status' not in info:
+            self.write("done")
+        else: self.write( info['status'] )
+
 def makeApp():
     return tornado.web.Application([
+        (r"/status/(\w*)",  status  ),
+
         (r"/js/(.*)",   tornado.web.StaticFileHandler, {"path":"js"}        ),      # This handles serving javascript.
         (r"/css/(.*)",  tornado.web.StaticFileHandler, {"path":"css"}       ),      # This handles the serving of stylesheets.
-        (r"/thumb/(.*)",tornado.web.StaticFileHandler, {"path":"thumbnails"}),
+        (r"/thumb/(.*)",tornado.web.StaticFileHandler, {"path":"thumbnails"}),      # This handles the serving of thumbnail videos.
         (r"/r(.*)",     tornado.web.StaticFileHandler, {"path":"videos"}    ),      # It should be noted, there is no '/' after 'r'. This handles serving raw video.
+
         (r"/e(\w*)",    embedVideo  ),  # An embeded video.
         (r"/v(\w*)",    watchVideo  ),  # A normal video page.
         (r"/upload",    uploadVideo ),  # The uploads form.
-        (r"/search",    search      ),
+        (r"/search",    search      ),  # Simple search page.
         (r"/.*",        index       ),  # The main page. If your post doesn't work, it goes here.
     ])
 

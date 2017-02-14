@@ -7,12 +7,22 @@
     </head>
     <body>
 
-        <h1> Your video is now processing. </h1>
-        <h3> It will show up at <a href="/v{{ id }}">/v{{ id }}</a>. </h3>
-        <h3> Please wait... </h3>
+        <div id="videoBox">
+            Your video will show up here when it's done.
+        </div>
+
+        <div id="videoStatus"> 
+            <h3> Processing Video... </h1>
+            Your video is currently: <span id="status"> starting </span> <br>
+            It will show up at <a href="/v{{ id }}">/v{{ id }}</a>.
+        </div>
+
 
     </body>
+
+    <script type="text/javascript">
+        var id = "{{ id }}";
+    </script>
+    <script type="text/javascript" src="/js/videoProcessing.js"></script>
     
-    <script src="js/jquery.js"></script>
-    <script src="js/index.js"></script>
 </html>
