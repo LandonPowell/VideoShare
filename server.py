@@ -63,6 +63,7 @@ class watchVideo(tornado.web.RequestHandler):
                 embed   = "e" + videoID,
                 title   = value['title'],
                 paste   = value['paste'],
+                tagList = value['tags'],
             ) )
 
 def writeVideo(videoData, videoObject):

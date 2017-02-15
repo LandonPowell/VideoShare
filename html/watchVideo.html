@@ -7,8 +7,16 @@
     <body>
         <iframe id="videoEmbed" src="{{ embed }}"></iframe>
         <h1 id="videoTitle"> {{ title }} </h1>
-        <div id="videoPaste">
-            {{ paste }}
+
+        <div id="infoBox">
+            <div id="videoPaste">
+                {{ paste }}
+            </div>
+            <div id="tagList">
+                {% for tag in tagList %}
+                    <a href="/search?query={{ tag }}">{{ tag }}</a>
+                {% end %}
+            </div>
         </div>
     </body>
     
