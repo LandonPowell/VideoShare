@@ -1,0 +1,288 @@
+@font-face {
+    font-family: playfair;
+    src: url("fonts/PlayfairDisplay-Regular.ttf");
+}
+
+* { outline: 0 ; }
+
+html, body {
+    padding: 0px;
+    margin: 0px;
+    height: 100%;
+}
+
+body {
+    background-color: #f7f7f7;
+    color: #666;
+    font-family: playfair;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    padding: 10px;
+    margin: 0px;
+    font-weight: normal;
+}
+
+a {
+    text-decoration: none;
+    color: #66d;
+}
+
+h1 {
+    border-bottom: 1px dashed #aaa;
+    margin-bottom: 10px;
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+h2 {
+    margin-top: 20px;
+    margin-left: 10px;
+    text-transform: capitalize;
+}
+
+.center {
+    position: fixed;
+    left: calc(50% - 180px);
+    top: calc(50% - 160px);
+    padding: 20px;
+    text-align: center;
+    width: 300px;
+    background-color: #fff;
+    border: 10px solid #eee;
+}
+
+#title {
+    font-size: 40px;
+    border-bottom: none;
+}
+
+#search {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 300px;
+}
+
+#search input {
+    font-family: playfair;
+    font-size: 20px;
+    border: 10px solid #eee;
+    padding: 7px;
+    width: 100%;
+}
+
+#uploadButton.close {
+    color: #666;
+}
+
+#uploadButton {
+    z-index: 9001;
+    width: 75px;
+    height: 35px;
+    position: fixed;
+    right: 30px;
+    top: 30px;
+    border:none;
+    background-color: #fff;
+    font-family: playfair;
+    font-size: 20px;
+    cursor: pointer;
+    color: #fff;
+    transition: color .25s;
+}
+
+#uploadButton:hover {
+    color: #999;
+}
+
+#upload {
+    z-index: 1337;
+    width: 300px;
+    height: 220px;
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border: 10px solid #eee;
+    transition: width .25s, height .25s;
+    overflow: hidden;
+}
+#upload.close {
+    width: 35px;
+    height: 0px;
+}
+#upload input {
+    font-family: playfair;
+    font-size: 17px;
+    border: none;
+    border-bottom: 1px dashed #bbb;
+    padding: 5px;
+    margin: 10px;
+    width: calc(100% - 30px);
+}
+
+#upload input[type="file"] {
+    width: calc(100% - 20px);
+    padding: 50px 0 0 0;
+    height: 0px;
+    overflow: hidden;
+    border: none;
+    box-sizing: border-box;
+    background: center no-repeat url("icons/dragDropIcon.png");
+    border: 1px dashed #bbb;
+    background-size: 60px;
+}
+
+#upload input[type="submit"] {
+    width: 100px;
+    display: block;
+    margin: auto;
+    background: #eee;
+    border: none;
+}
+
+#videoEmbed {
+    margin: 0px;
+    border: 0px;
+    width: 100%;
+    height: calc(100% - 100px);
+}
+
+#videoTitle {
+    border-bottom: none;
+    padding: 0px;
+    font-size: 65px;
+}
+
+#infoBox {    
+    margin: 20px;
+    width: calc(100% - 500px);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#videoPaste, #tagList {
+    margin-left: auto;
+    display: inline-block;
+    background-color: #fff;
+    border: 10px solid #eee;
+    padding: 20px;
+}
+
+#videoPaste {
+    width: 60%;
+    margin-right: 10px;
+    float: left;
+}
+
+#tagList {
+    width: calc( 25% - 10px);
+}
+
+#tagList a {
+    background-color: #f7f7f7;
+    padding: 5px;
+    margin: 5px;
+    line-height: 40px;
+}
+
+/* 
+    SEARCH PAGE SPECIFIC STYLES
+*/
+
+#results {
+    margin-top: 20px;
+}
+
+.videoResult {
+    background-color: #eee;
+    display: inline-block;
+    padding: 10px;
+    margin: 20px;
+    width: calc(30% - 20px);
+}
+
+.videoResult video {
+    background-color: #000;
+    width: 100%;
+    height: 200px;
+}
+
+.videoResult .title {
+    color: #666;
+    font-size: 25px;
+}
+
+.videoResult .paste {
+    color: #aaa;
+}
+
+/*
+    INDEX PAGE SPECIFIC STYLES
+*/
+
+#recentVideos {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.recentVideo {
+    display: inline-block;
+    flex-grow: 1;
+    background-color: #eee;
+    padding: 10px;
+    margin: 10px;
+}
+
+.recentVideo video {
+    background-color: #000;
+}
+
+.recentVideo .title {
+    color: #666;
+    font-size: 20px;
+}
+
+.recentVideo .paste {
+    color: #aaa;
+}
+
+/* 
+    VIDEO PROCESSING SPECIFIC STYLES
+*/
+
+#videoBox {
+    margin: auto;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 30px;
+    background-color: black;
+    color: white;
+    height: 450px;
+    line-height: 450px;
+}
+
+#videoBox iframe {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    border: none;
+}
+
+#videoStatus {
+    margin: auto;
+    width: 230px;
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    border: 10px solid #eee;
+}
+
+#videoStatus a {
+}
