@@ -1,8 +1,3 @@
-@font-face {
-    font-family: playfair;
-    src: url("fonts/PlayfairDisplay-Regular.ttf");
-}
-
 * { outline: 0 ; }
 
 html, body {
@@ -12,9 +7,9 @@ html, body {
 }
 
 body {
-    background-color: #f7f7f7;
+    background-color: #fff;
     color: #666;
-    font-family: playfair;
+    font-family: sans-serif, 'Helvetica', 'Arial';
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -25,11 +20,11 @@ h1, h2, h3, h4, h5, h6 {
 
 a {
     text-decoration: none;
-    color: #66d;
+    color: #a7f;
 }
 
 h1 {
-    border-bottom: 1px dashed #aaa;
+    border-bottom: 1px solid #eee;
     margin-bottom: 10px;
     width: 70%;
     margin-left: auto;
@@ -43,6 +38,12 @@ h2 {
     text-transform: capitalize;
 }
 
+input {
+    box-shadow: 0px 1px 2px rgba(0,0,0, 0.4) inset;
+    border: none;
+    border-left: 2px solid #a7f;
+}
+
 .center {
     position: fixed;
     left: calc(50% - 180px);
@@ -51,7 +52,7 @@ h2 {
     text-align: center;
     width: 300px;
     background-color: #fff;
-    border: 10px solid #eee;
+    box-shadow: 0px 1px 2px rgba(0,0,0, 0.4);
 }
 
 #title {
@@ -67,9 +68,9 @@ h2 {
 }
 
 #search input {
-    font-family: playfair;
+    font-family: sans-serif, 'Helvetica', 'Arial';
     font-size: 20px;
-    border: 10px solid #eee;
+    box-shadow: 0px 1px 2px rgba(0,0,0, 0.4);
     padding: 7px;
     width: 100%;
 }
@@ -79,15 +80,15 @@ h2 {
 }
 
 #uploadButton {
+    z-index: 9001;
     width: 75px;
     height: 35px;
     position: fixed;
-    right: 30px;
-    top: 30px;
-    z-index: 1;
-    border:none;
-    background-color: #fff;
-    font-family: playfair;
+    right: 20px;
+    top: 20px;
+    border: none;
+    background-color: Transparent;
+    font-family: sans-serif, 'Helvetica', 'Arial';
     font-size: 20px;
     cursor: pointer;
     color: #fff;
@@ -99,6 +100,7 @@ h2 {
 }
 
 #upload {
+    z-index: 1337;
     width: 300px;
     height: 220px;
     position: fixed;
@@ -106,7 +108,7 @@ h2 {
     top: 20px;
     background-color: #fff;
     padding: 20px;
-    border: 10px solid #eee;
+    box-shadow: 0px 1px 2px rgba(0,0,0, 0.4);
     transition: width .25s, height .25s;
     overflow: hidden;
 }
@@ -115,13 +117,15 @@ h2 {
     height: 0px;
 }
 #upload input {
-    font-family: playfair;
+    font-family: sans-serif, 'Helvetica', 'Arial';
     font-size: 17px;
-    border: none;
-    border-bottom: 1px dashed #bbb;
     padding: 5px;
     margin: 10px;
     width: calc(100% - 30px);
+    transition: opacity .5s;
+}
+#upload.close input {
+    opacity: 0;
 }
 
 #upload input[type="file"] {
@@ -132,7 +136,10 @@ h2 {
     border: none;
     box-sizing: border-box;
     background: center no-repeat url("icons/dragDropIcon.png");
-    border: 1px dashed #bbb;
+    border: 2px solid #a7f;
+    border-top: 0px;
+    border-right: 0px;
+    box-shadow: 0px 1px 2px rgba(0,0,0, 0.4) inset;
     background-size: 60px;
 }
 
@@ -140,9 +147,18 @@ h2 {
     width: 100px;
     display: block;
     margin: auto;
-    background: #eee;
+    background: #a7f;
+    color: #fff;
+    border-radius: 3px;
     border: none;
+    box-shadow: 
+        0px 1px 2px rgba(0,0,0, 0.4), 
+        0px 3px 0px -1px rgba(255,255,255,0.5) inset;
 }
+
+/* 
+    VIDEO WATCHING PAGE SPECIFIC STYLES
+*/
 
 #videoEmbed {
     margin: 0px;
@@ -157,14 +173,39 @@ h2 {
     font-size: 65px;
 }
 
-#videoPaste {
+#infoBox {
     margin: 20px;
-    background-color: #fff;
-    border: 10px solid #eee;
-    padding: 20px;
     width: calc(100% - 500px);
     margin-left: auto;
     margin-right: auto;
+}
+
+#videoPaste, #tagList {
+    margin-left: auto;
+    display: inline-block;
+    box-shadow: 0px 1px 2px rgba(0,0,0, 0.4) inset;
+    background-color: #f7f7f7;
+    padding: 20px;
+}
+
+#videoPaste {
+    width: 65%;
+    margin-right: 10px;
+    float: left;
+}
+
+#tagList {
+    width: calc( 25% - 10px);
+    text-align: center;
+}
+
+#tagList a {
+    background-color: #fff;
+    box-shadow: 0px 1px 2px rgba(0,0,0, 0.4);
+    border-left: 2px solid #a7f;
+    padding: 5px;
+    margin: 2px;
+    line-height: 40px;
 }
 
 /* 
@@ -176,7 +217,9 @@ h2 {
 }
 
 .videoResult {
-    background-color: #eee;
+    background-color: #fff;
+    border-left: 2px solid #a7f;
+    box-shadow: 0px 1px 2px rgba(0,0,0, 0.4);
     display: inline-block;
     padding: 10px;
     margin: 20px;
@@ -206,14 +249,20 @@ h2 {
     width: 100%;
     display: flex;
     justify-content: center;
+    background-color: #f7f7f7;
+    box-shadow: 0px 1px 4px rgba(0,0,0, 0.4) inset;
 }
 
 .recentVideo {
     display: inline-block;
-    flex-grow: 1;
-    background-color: #eee;
+    width: 200px;
+    background-color: #fff;
+    box-shadow: 0px 1px 2px rgba(0,0,0, 0.4);
+    border-left: 2px solid #a7f;
     padding: 10px;
     margin: 10px;
+    overflow-x: hidden;
+    white-space: nowrap;
 }
 
 .recentVideo video {
@@ -221,12 +270,18 @@ h2 {
 }
 
 .recentVideo .title {
+    overflow-x: hidden;
     color: #666;
     font-size: 20px;
+    width: 200px;
+    text-overflow: ellipsis;
 }
 
 .recentVideo .paste {
+    overflow-x: hidden;
     color: #aaa;
+    width: 200px;
+    text-overflow: ellipsis;
 }
 
 /* 
@@ -256,10 +311,15 @@ h2 {
     margin: auto;
     width: 230px;
     text-align: center;
-    background-color: #fff;
+    background-color: #f7f7f7;
+    box-shadow: 0px 1px 2px rgba(0,0,0, 0.4) inset;
     padding: 20px;
-    border: 10px solid #eee;
+    line-height: 30px;
 }
 
 #videoStatus a {
+    border-left: 2px solid #a7f;
+    box-shadow: 0px 1px 2px rgba(0,0,0, 0.4);
+    padding: 3px;
+    background-color: #fff;
 }
